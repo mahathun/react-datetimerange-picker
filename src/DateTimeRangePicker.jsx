@@ -411,6 +411,73 @@ export default class DateTimeRangePicker extends PureComponent {
     );
   }
 
+
+  changeTime = (value, closeWidgets=true)=>{
+
+    this.onChange(value, closeWidgets)
+  }
+
+  renderTimePicker() {
+    const { disableTimePicker } = this.props;
+    const { isClockOpen } = this.state;
+
+    if (isClockOpen === null || disableTimePicker) {
+      return null;
+    }
+
+    const {
+      clockClassName,
+      className: dateTimeRangePickerClassName, // Unused, here to exclude it from clockProps
+      maxDetail,
+      onChange,
+      value,
+      rangeDivider,
+      ...clockProps
+    } = this.props;
+    
+    const className = `${baseClassName}__time-picker`;
+    const [valueFrom, valueTo] = [].concat(value);
+
+    const maxDetailIndex = allViews.indexOf(maxDetail);
+
+    const hours = [...Array(24)].map((item,index)=>index)
+    const minutes = [...Array(60)].map((item,index)=>index)
+
+    const selectedFromHour = valueFrom?.getHours();
+    const selectedToHour = valueTo?.getHours();
+
+    const selectedFromMinutes = valueFrom?.getMinutes();
+    const selectedToMinutes = valueTo?.getMinutes();
+
+    let maxFromHour=null, maxFromMinutes=null, maxToHour=null, maxToMinutes=null;
+
+    return (
+      <Fit>
+        <div className={mergeClassNames(className, `${className}--${isClockOpen ? 'open' : 'closed'}`)}>
+          <div className="hour-wrapper">
+            <div>Hour</div>
+            {hours.map((val,index)=><span key={'from-hour-'+index} className={`time-option ${(selectedFromHour==index)? 'selected':''}`} onClick={()=>{valueFrom.setHours(val);this.onChangeFrom(valueFrom , false)}}>{val}</span>)}
+          </div>
+          <div className="minute-wrapper">
+            <div>Minutes</div>
+            {minutes.map((val,index)=><span key={'from-minute-'+index} className={`time-option ${(selectedFromMinutes==index)? 'selected':''}`}  onClick={()=>{valueFrom.setMinutes(val);this.onChangeFrom( valueFrom, false)}}>{val}</span>)}
+          </div>
+            <div className="start-end-time-separator">{rangeDivider}</div>
+          <div className="hour-wrapper">
+            <div>Hour</div>
+            {hours.map((val,index)=><span key={'to-hour-'+index}  className={`time-option ${(selectedToHour==index)? 'selected':''}`}  onClick={()=>{valueTo.setHours(val);this.onChangeTo(valueTo, false)}}>{val}</span>)}
+          </div>
+          <div className="minute-wrapper">
+            <div>Minutes</div>
+            {minutes.map((val,index)=><span key={'to-minute-'+index}  className={`time-option ${(selectedToMinutes==index)? 'selected':''}`}  onClick={()=>{valueTo.setMinutes(val);this.onChangeTo( valueTo, true)}}>{val}</span>)}
+          </div>
+          
+          
+        </div>
+      </Fit>
+    )
+  }
+
   render() {
     const { className, disabled } = this.props;
     const { isCalendarOpen, isClockOpen } = this.state;
@@ -436,6 +503,8 @@ export default class DateTimeRangePicker extends PureComponent {
         {this.renderInputs()}
         {this.renderCalendar()}
         {this.renderClock()}
+
+        {this.renderTimePicker()}
       </div>
     );
   }
@@ -480,6 +549,7 @@ DateTimeRangePicker.defaultProps = {
   maxDetail: 'minute',
   name: 'datetimerange',
   rangeDivider: '–',
+  disableTimePicker: true
 };
 
 const isValue = PropTypes.oneOfType([
@@ -511,6 +581,7 @@ DateTimeRangePicker.propTypes = {
   dayPlaceholder: PropTypes.string,
   disableCalendar: PropTypes.bool,
   disableClock: PropTypes.bool,
+  disableTimePicker: PropTypes.bool,
   disabled: PropTypes.bool,
   format: PropTypes.string,
   hourAriaLabel: PropTypes.string,

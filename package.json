@@ -5,6 +5,7 @@
   "main": "dist/entry.js",
   "source": "src/entry.js",
   "scripts": {
+    "start": "yarn build-js && yarn copy-styles && yarn build-styles && parcel --no-cache --no-autoinstall ./src/index.html ",
     "build": "yarn build-js && yarn copy-styles && yarn build-styles",
     "build-js": "babel src -d dist --ignore **/*.spec.js,**/*.spec.jsx",
     "build-styles": "lessc ./dist/DateTimeRangePicker.less ./dist/DateTimeRangePicker.css",
@@ -71,6 +72,7 @@
     "eslint-plugin-react-hooks": "^4.0.0",
     "jest": "^26.0.0",
     "less": "^3.8.1",
+    "parcel-bundler": "^1.12.4",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
     "react-test-renderer": "^16.7.0",
